@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misinformation Detection System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .info-box {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+            color: #555;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 250px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+            line-height: 1.6;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .char-count {
+            text-align: right;
+            color: #999;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            display: none;
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result.fake {
+            background: linear-gradient(135deg, #fee 0%, #fdd 100%);
+            border: 2px solid #fcc;
+        }
+        
+        .result.real {
+            background: linear-gradient(135deg, #efe 0%, #dfd 100%);
+            border: 2px solid #cfc;
+        }
+        
+        .result h2 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .result.fake h2 {
+            color: #c33;
+        }
+        
+        .result.real h2 {
+            color: #3c3;
+        }
+        
+        .confidence {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .confidence-item {
+            flex: 1;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .confidence-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .confidence-item h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .confidence-item .value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .confidence-item.fake .value {
+            color: #c33;
+        }
+        
+        .confidence-item.real .value {
+            color: #3c3;
+        }
+        
+        .error {
+            background: #fee;
+            border: 2px solid #fcc;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .confidence {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Misinformation Detection System</h1>
+        <p class="subtitle">AI-Powered News Verification Tool</p>
+        
+        <div class="info-box">
+            <strong>ℹ️ How it works:</strong> Paste a news article or text below, and our machine learning model will analyze it to determine if it's likely to be <strong>FAKE</strong> or <strong>REAL</strong> news. The model has been trained on thousands of articles and achieves 92.74% accuracy.
+        </div>
+        
+        <textarea id="textInput" placeholder="Paste your news article here..."></textarea>
+        <div class="char-count"><span id="charCount">0</span> characters</div>
+        
+        <button onclick="analyze()" id="analyzeBtn">Analyze Article</button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>Analyzing article...</div>
+        </div>
+        
+        <div class="error" id="error"></div>
+        
+        <div class="result" id="result">
+            <h2 id="resultTitle">
+                <span id="resultIcon"></span>
+                <span id="resultText"></span>
+            </h2>
+            <div class="confidence">
+                <div class="confidence-item fake">
+                    <h3>FAKE</h3>
+                    <div class="value" id="fakeScore">0%</div>
+                </div>
+                <div class="confidence-item real">
+                    <h3>REAL</h3>
+                    <div class="value" id="realScore">0%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const textInput = document.getElementById('textInput');
+        const charCount = document.getElementById('charCount');
+        
+        // Update character count
+        textInput.addEventListener('input', function() {
+            charCount.textContent = this.value.length;
+        });
+        
+        // Allow Enter key to submit (Ctrl+Enter or Cmd+Enter)
+        textInput.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                analyze();
+            }
+        });
+        
+        async function analyze() {
+            const text = textInput.value.trim();
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            
+            // Hide previous results
+            resultDiv.style.display = 'none';
+            errorDiv.style.display = 'none';
+            
+            if (!text) {
+                showError('Please enter some text to analyze.');
+                return;
+            }
+            
+            if (text.length < 10) {
+                showError('Text is too short. Please provide at least 10 characters.');
+                return;
+            }
+            
+            // Show loading state
+            loadingDiv.style.display = 'block';
+            analyzeBtn.disabled = true;
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'An error occurred');
+                }
+                
+                // Display results
+                const isFake = data.prediction === 'FAKE';
+                resultDiv.className = 'result ' + (isFake ? 'fake' : 'real');
+                
+                document.getElementById('resultIcon').textContent = isFake ? '⚠️' : '✅';
+                document.getElementById('resultText').textContent = 
+                    `This article is classified as: ${data.prediction}`;
+                
+                // Update confidence scores
+                const fakeScore = (data.confidence.FAKE * 100).toFixed(2);
+                const realScore = (data.confidence.REAL * 100).toFixed(2);
+                
+                document.getElementById('fakeScore').textContent = fakeScore + '%';
+                document.getElementById('realScore').textContent = realScore + '%';
+                
+                resultDiv.style.display = 'block';
+                
+            } catch (error) {
+                showError('Error analyzing text: ' + error.message);
+            } finally {
+                loadingDiv.style.display = 'none';
+                analyzeBtn.disabled = false;
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
+
