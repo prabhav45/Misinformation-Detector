@@ -1,6 +1,6 @@
 # Misinformation Detection System
 
-A web application that uses machine learning to detect fake news articles. The system uses a PassiveAggressive Classifier trained on news articles to classify text as either FAKE or REAL with 92.74% accuracy.
+A web application that uses machine learning to detect fake news articles. The system uses a PassiveAggressive Classifier trained on news articles to classify text as either FAKE or REAL with 94.16% accuracy.
 
 ## Features
 
@@ -25,7 +25,7 @@ pip install -r requirements.txt
    - `tfidf_vectorizer.pkl` - The text vectorizer
    - `pac_model.pkl` - The trained PassiveAggressive classifier
 
-**Important:** Make sure you have the `news.zip` file in the same directory as the notebook.
+**Important:** The dataset is too large to store in this repo, and you only need it to retrain the model. Download `WELFake_Dataset.csv` from [Kaggle](https://www.kaggle.com/datasets/saurabhshahane/fake-news-classification) and put it in the same directory as the notebook. In this file, label `0` means real and `1` means fake.
 
 ### 3. Run the Web Application
 
@@ -33,11 +33,11 @@ pip install -r requirements.txt
 python app.py
 ```
 
-The application will start on `http://localhost:5000`
+The application will start on `http://localhost:5001`
 
 ### 4. Use the Application
 
-1. Open your web browser and navigate to `http://localhost:5000`
+1. Open your web browser and navigate to `http://localhost:5001`
 2. Paste a news article or text into the text area
 3. Click "Analyze Article" to get the prediction
 4. View the results showing whether the text is classified as FAKE or REAL, along with confidence scores
@@ -59,7 +59,7 @@ ML Projects/
 ## Model Details
 
 - **Algorithm:** PassiveAggressive Classifier
-- **Accuracy:** 92.74%
+- **Accuracy:** 94.16%
 - **Features:** TF-IDF vectorization with English stop words
 - **Training:** 80% train, 20% test split
 
@@ -92,7 +92,7 @@ Check if the model is loaded and ready.
 ## Troubleshooting
 
 - **Model not found error:** Make sure you've run the notebook and saved the model files
-- **Port already in use:** Change the port in `app.py` (line 50) from `5000` to another port
+- **Port already in use:** Change the port at the bottom of `app.py` from `5001` to another port
 - **Import errors:** Make sure all dependencies are installed: `pip install -r requirements.txt`
 
 ## Notes

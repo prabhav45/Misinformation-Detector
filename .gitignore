@@ -1,0 +1,11 @@
+# Python
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+
+# Dataset (too large for GitHub; see README)
+WELFake_Dataset.csv
+*.zip
+
+# macOS
+.DS_Store
